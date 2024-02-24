@@ -5,13 +5,12 @@ dotenv.config();
 
 exports.login = async (req, res) => {
   try {
-    const { email, name, id, image } = req.body.user;
+    const { email, name, image } = req.body;
     let checkUser = await userSchema.findOne({ email: email });
     if (!checkUser) {
       try {
         checkUser = await userSchema.create({
           email,
-          userHandle: `user${id}`,
           password: generateStrongPassword(),
           avatar: image,
           name: name,
@@ -28,7 +27,6 @@ exports.login = async (req, res) => {
     const payload = {
       userHandle: checkUser.userHandle,
       email: checkUser.email,
-      id: checkUser._id,
     };
 
     let token = jwt.sign(payload, process.env.JWT_SECRET, {
