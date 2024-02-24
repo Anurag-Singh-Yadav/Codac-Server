@@ -4,13 +4,10 @@ const multerS3 = require("multer-s3");
 const util = require("util");
 const path = require("path");
 
-
 const region = process.env.NEXT_PUBLIC_AWS_REGION;
 const bucketName = process.env.NEXT_PUBLIC_AWS_BUCKET_NAME;
 const accessKeyId = process.env.NEXT_PUBLIC_AWS_ACCESS_KEY_ID;
 const secretAccessKey = process.env.NEXT_PUBLIC_AWS_SECRET_ACCESS_KEY;
-
-
 
 const s3 = new S3Client({
   credentials: {
@@ -23,6 +20,7 @@ const s3 = new S3Client({
 const storage = multerS3({
   s3:s3,
   bucket: bucketName,
+  contentType: multerS3.AUTO_CONTENT_TYPE,
   metadate: function (req , file , cb){
     cb(null , {fieldName: file.fieldName})
   },
@@ -31,11 +29,12 @@ const storage = multerS3({
   }
 })
 
-
 function checkFileType(file , cb){
     const fileTypes = /jpeg|jpg|png|pdf/
 
     const extname = fileTypes.test(path.extname(file.originalname).toLowerCase())
+
+    console.log('hererere');
 
     const mimitype = fileTypes.test(file.mimetype);
 
@@ -50,6 +49,7 @@ function checkFileType(file , cb){
 const upload = multer({
     storage: storage,
     fileFilter: function(req , file , cb){
+        console.log('Testing');
         checkFileType(file , cb);
     },
 
