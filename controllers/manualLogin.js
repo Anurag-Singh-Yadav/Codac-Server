@@ -6,14 +6,14 @@ dotenv.config();
 exports.manualLogin = async (req, res) => {
   const { email, password } = req.body;
   try {
-    const user = await userSchema.findOne({ email: email });
-    if (!user) {
+    let checkUser = await userSchema.findOne({ email: email });
+    if (!checkUser) {
       return res.status(400).json({
         success: false,
         message: "User not found",
       });
     }
-    if (user.password !== password) {
+    if (checkUser.password !== password) {
       return res.status(400).json({
         success: false,
         message: "Invalid password",
@@ -21,8 +21,8 @@ exports.manualLogin = async (req, res) => {
     }
 
     const payload = {
-      email: user.email,
-      name: user.name,
+      email: checkUser.email,
+      name: checkUser.name,
     };
 
     let token = jwt.sign(payload, process.env.JWT_SECRET, {
@@ -37,10 +37,11 @@ exports.manualLogin = async (req, res) => {
     return res.cookie("token", token, options).status(200).json({
       success: true,
       token: token,
-      user: checkUser,
+      checkUser,
       message: "Logged in successfully",
     });
   } catch (error) {
+    console.log(error);
     return res.status(500).json({
       success: false,
       message: "Server error",
@@ -51,6 +52,8 @@ exports.manualLogin = async (req, res) => {
 exports.createUser = async (req, res) => {
   const { email, password, name } = req.body;
   try {
+
+    console.log("here",email,password,name);
 
     let user = await userSchema.findOne({ email: email });
 

@@ -10,7 +10,7 @@ const {createUser, manualLogin} = require('../controllers/manualLogin');
 
 router.post('/create-user',createUser);
 
-router.post('manualLogin',manualLogin);
+router.post('/manualLogin',manualLogin);
 
 router.post('/authlogin', login);
 
