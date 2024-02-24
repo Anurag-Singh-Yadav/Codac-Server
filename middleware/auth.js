@@ -7,7 +7,7 @@ exports.auth = (req, res, next) => {
       req.body.token ||
       req.cookies.token ||
       req.header("Authorization").replace("Bearer ", "");
-    console.log(token);
+    // console.log(token);
     if (!token) {
       return res.status(403).json({
         success: false,
