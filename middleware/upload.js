@@ -30,20 +30,19 @@ const storage = multerS3({
 })
 
 function checkFileType(file , cb){
-    const fileTypes = /jpeg|jpg|png|pdf/
+  const fileTypes = /jpeg|jpg|png|pdf|text|txt|text\/plain/;
+  
+  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
 
-    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase())
+  console.log(file,'-------->file');
 
-    console.log('hererere');
-
-    const mimitype = fileTypes.test(file.mimetype);
-
-    if(extname && mimitype){
-        return cb(null , true);
-    }
-    else{
-        cb('Error: Unknown file type');
-    }
+  const mimitype = fileTypes.test(file.mimetype);
+  
+  if (extname && mimitype) {
+    return cb(null, true);
+  } else {
+    cb(new Error('Error: Invalid file type. Only JPEG, JPG, PNG, TXT, and PDF files are allowed.')); // Update the error message
+  }
 }
 
 const upload = multer({
