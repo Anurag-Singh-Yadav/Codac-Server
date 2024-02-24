@@ -4,7 +4,13 @@ const router = express.Router();
 const { login } = require('../controllers/autoAuth');
 const uploadMiddleWare = require('../middleware/upload');
 const { uploadFile } = require('../controllers/upload');
-router.post('/authlogin', login); 
+const { auth } = require('../middleware/auth');
+const {userDetails} = require('../controllers/userDetails');
+
+
+router.post('/authlogin', login);
+
+router.get('/check-Login',auth, userDetails);
 
 router.post('/get-file-url', uploadMiddleWare , uploadFile , (req,res) => {
     return res.status(200).json({
