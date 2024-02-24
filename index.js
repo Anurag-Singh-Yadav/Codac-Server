@@ -14,7 +14,7 @@ app.use(cookieParser());
 
 app.use('/codac', require('./router/user'));
 
-const PORT = 4000 ;
+const PORT = 4001 ;
 app.listen(PORT, () => {
     console.log(`Server is listening on port ${PORT}`);
 });
