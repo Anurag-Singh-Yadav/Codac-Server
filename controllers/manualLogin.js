@@ -13,7 +13,6 @@ exports.manualLogin = async (req, res) => {
         message: "User not found",
       });
     }
-    
     if (user.password !== password) {
       return res.status(400).json({
         success: false,
@@ -56,7 +55,7 @@ exports.createUser = async (req, res) => {
     let user = await userSchema.findOne({ email: email });
 
     if (user) {
-      return res.status(400).json({
+      return res.status(200).json({
         success: false,
         message: "User already exists",
       });
