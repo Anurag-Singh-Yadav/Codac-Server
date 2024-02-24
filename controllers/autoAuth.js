@@ -25,7 +25,7 @@ exports.login = async (req, res) => {
       }
     }
     const payload = {
-      userHandle: checkUser.userHandle,
+      name: name,
       email: checkUser.email,
     };
 
