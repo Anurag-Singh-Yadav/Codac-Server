@@ -85,9 +85,10 @@ router.post("/get-file-url", uploadMiddleWare, uploadFile, async (req, res) => {
   }
 });
 
-const previewExcel = async (inputFilePath) => {
+const previewExcel = (inputFilePath) => {
+  console.log(' ----> ' , inputFilePath)
   try {
-    const workbook = await xlsx.readFile(inputFilePath);
+    const workbook = xlsx.readFile(inputFilePath);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
 
