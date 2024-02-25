@@ -8,6 +8,9 @@ const { auth } = require('../middleware/auth');
 const {userDetails} = require('../controllers/userDetails');
 const {createUser, manualLogin} = require('../controllers/manualLogin');
 
+const xlsx = require("xlsx");
+
+
 router.post('/create-user',createUser);
 
 router.post('/manualLogin',manualLogin);
@@ -18,6 +21,11 @@ router.get('/check-Login',auth, userDetails);
 const  axios  = require('axios');
 const { spawn } = require('child_process'); 
 const fs = require('fs');
+
+
+
+
+
 
 router.post('/authlogin', login); 
 
@@ -86,7 +94,45 @@ router.post('/get-file-url', uploadMiddleWare , uploadFile , async(req,res) => {
 });
 
 
+router.post("/preview", uploadMiddleWare, uploadFile, async (req, res) => {
+  const s3Url = req.files[0].location;
+  const inputFilePath =
+    "./input-videos/input." + req.files[0].originalname.split(".").pop();
 
+  await downloadFile(s3Url, inputFilePath);
+  try {
+    const workbook = await xlsx.readFile(inputFilePath);
+    const sheetName = workbook.SheetNames[0];
+    const worksheet = workbook.Sheets[sheetName];
+
+    
+    const jsonSheet = xlsx.utils.sheet_to_json(worksheet);
+    // console.log(jsonSheet);
+
+    const previewData = [];
+
+    for (let i = 0; i < jsonSheet.length; i++) {
+        const temp = [];
+        const row = jsonSheet[i];
+        for (const key in row) {
+          const value = row[key];
+            if (value) {
+                temp.push(value);
+            }
+        }
+        previewData.push(temp);
+      }
+
+      return res.status(200).json({
+        success: true,
+        preview:previewData,
+      });
+
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).send({ message: "Error generating preview"});
+}
+});
 
 module.exports = router;
 
