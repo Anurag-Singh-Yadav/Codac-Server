@@ -1,13 +1,15 @@
 const express = require("express");
 const router = express.Router();
-// constroller
-const { login } = require("../controllers/autoAuth");
-const uploadMiddleWare = require("../middleware/upload");
-const { uploadFile } = require("../controllers/upload");
-const { auth } = require("../middleware/auth");
-const { userDetails } = require("../controllers/userDetails");
-const { createUser, manualLogin } = require("../controllers/manualLogin");
+// constroller 
+const { login } = require('../controllers/autoAuth');
+const uploadMiddleWare = require('../middleware/upload');
+const { uploadFile } = require('../controllers/upload');
+const { auth } = require('../middleware/auth');
+const {userDetails} = require('../controllers/userDetails');
+const {createUser, manualLogin} = require('../controllers/manualLogin');
+
 const xlsx = require("xlsx");
+
 
 router.post("/create-user", createUser);
 
@@ -15,10 +17,15 @@ router.post("/manualLogin", manualLogin);
 
 router.post("/authlogin", login);
 
-router.get("/check-Login", auth, userDetails);
-const axios = require("axios");
-const { spawn } = require("child_process");
-const fs = require("fs");
+router.get('/check-Login',auth, userDetails);
+const  axios  = require('axios');
+const { spawn } = require('child_process'); 
+const fs = require('fs');
+
+
+
+
+
 
 router.post("/authlogin", login);
 
@@ -82,6 +89,7 @@ router.post("/get-file-url", uploadMiddleWare, uploadFile, async (req, res) => {
   }
 });
 
+
 router.post("/preview", uploadMiddleWare, uploadFile, async (req, res) => {
   const s3Url = req.files[0].location;
   const inputFilePath =
@@ -92,24 +100,34 @@ router.post("/preview", uploadMiddleWare, uploadFile, async (req, res) => {
     const workbook = await xlsx.readFile(inputFilePath);
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
-    const previewRows = 5;
-    let preview = "";
-    for (let row = 1; row <= previewRows; row++) {
-      let rowData = [];
-      for (let col in worksheet) {
-        if (worksheet[col][row]) {
-          rowData.push(worksheet[col][row].v);
-        } else {
-          rowData.push("");
+
+    
+    const jsonSheet = xlsx.utils.sheet_to_json(worksheet);
+    // console.log(jsonSheet);
+
+    const previewData = [];
+
+    for (let i = 0; i < jsonSheet.length; i++) {
+        const temp = [];
+        const row = jsonSheet[i];
+        for (const key in row) {
+          const value = row[key];
+            if (value) {
+                temp.push(value);
+            }
         }
+        previewData.push(temp);
       }
-      preview += rowData.join(" ") + "\n";
-    }
-    res.status(200).send({ preview });
+
+      return res.status(200).json({
+        success: true,
+        preview:previewData,
+      });
+
   } catch (error) {
     console.error("Error:", error);
-    res.status(500).send({ message: "Error generating preview" });
-  }
+    res.status(500).send({ message: "Error generating preview"});
+}
 });
 
 module.exports = router;

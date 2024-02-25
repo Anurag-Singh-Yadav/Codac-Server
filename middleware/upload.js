@@ -29,29 +29,8 @@ const storage = multerS3({
   }
 })
 
-function checkFileType(file , cb){
-  const fileTypes = /jpeg|jpg|png|pdf|text|txt|text\/plain/;
-  
-  const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
-
-  console.log(file,'-------->file');
-
-  const mimitype = fileTypes.test(file.mimetype);
-  
-  if (extname && mimitype) {
-    return cb(null, true);
-  } else {
-    cb(new Error('Error: Invalid file type. Only JPEG, JPG, PNG, TXT, and PDF files are allowed.')); // Update the error message
-  }
-}
-
 const upload = multer({
     storage: storage,
-    fileFilter: function(req , file , cb){
-        console.log('Testing');
-        checkFileType(file , cb);
-    },
-
 }).array('file' , 5);
 
 const uploadMiddleWare = util.promisify(upload);
