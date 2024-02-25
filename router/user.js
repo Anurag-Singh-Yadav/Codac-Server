@@ -45,8 +45,8 @@ async function downloadFile(url, filePath) {
 
 router.post('/get-file-url', uploadMiddleWare , uploadFile , async(req,res) => {
   const s3Url = req.files[0].location;
-  // const inputFilePath = ".\\input-videos\\input."+ req.files[0].originalname.split('.').pop();
-  const inputFilePath = "./input-videos/input."+ req.files[0].originalname.split('.').pop();
+  const inputFilePath = ".\\input-videos\\input."+ req.files[0].originalname.split('.').pop();
+  // const inputFilePath = "./input-videos/input."+ req.files[0].originalname.split('.').pop();
 
   await downloadFile(s3Url, inputFilePath);
   try {
